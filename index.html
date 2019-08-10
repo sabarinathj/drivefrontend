@@ -84,6 +84,9 @@
     .navbar-inverse {
       
     }
+	#error-message, #success-message, #warning-message{
+		display: none;
+	}
   </style>
 
 </head>
@@ -139,17 +142,36 @@
 	    <form class="form-inline">
 		  <div class="form-group">
 			<label for="projectID">Project ID</label>
-			<input type="text" class="form-control" id="projectID" placeholder="Project ID">
+			<input type="text" name="projectid" class="form-control" id="projectID" placeholder="Project ID" required>
 		  </div>
 		  <div class="form-group">
-			<select name="skill" class="form-control">
-			  <option value="javaScript">JavaScript</option>
-			  <option value="Angular">Angular</option>
-			  <option value="Spring-boot">Spring Boot</option>
+			<select id="skills" name="skill" class="form-control"  onchange="getSkills(skill)">
+				<option value="">Select</option>
+				<option value="javaScript">JavaScript</option>
+				<option value="Angular">Angular</option>
+				<option value="Spring-boot">Spring Boot</option>
 			</select>
 		  </div>
-		  <button type="submit" class="btn btn-default">Submit</button>
+		  <button type="button" class="btn btn-default" onclick="createDemand()">Submit</button>
 		</form>
+		<br/>
+		<div class="row">
+			<div id="error-message" class="alert alert-danger">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<strong>Oh snap!</strong> All Fields are Mandatory.
+			</div>
+			<div id="success-message" class="alert alert-success">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<strong>Well done!</strong> You successfully Submitted Demand.
+			</div>
+			<div id="warning-message" class="alert alert-warning">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<strong>API Alert!</strong> Unable to Submit Request
+			</div>
+		</div>
+		<div id="selectedSkills" class="row">
+			
+		</div>
       <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>-->
     </div>
 
@@ -174,6 +196,58 @@
       -->
       
     </div>
+	<script>
+		var skillsArr = [];
+		function getSkills(skill){
+			//console.log(skill);
+			var skillselected = document.getElementById("skills").value;
+			if(skillselected.length > 0){
+				skillsArr.push(skillselected);
+				document.getElementById("selectedSkills").append(skillselected + ", ");
+			}
+			//var removeSkill = document.createElement('<i class="fa fa-times fa-fw "></i>')
+			//console.log("skill name",skillselected);
+			
+		}
+		function createDemand(){
+			var obj = {}
+			
+				var projectid = document.getElementById('projectID').value;
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					/*document.getElementById("demo").innerHTML = this.responseText;*/
+					var resText = JSON.parse(this.responseText);
+					//
+					
+					if(resText.status == "SUCCESS"){
+						console.log(true);
+						document.getElementById("success-message").style.display = "block";
+						//sessionStorage.setItem("username", obj.userName);
+						//basepath += '/home';
+						//window.location.href = basepath;
+					}else{
+						console.log(false);
+						document.getElementById("warning-message").style.display = "block";
+					}
+				}
+			};
+			var obj = {
+				projectManagerId: projectid,
+				skills: skillsArr
+			}
+			console.log(obj);
+			if(obj.projectManagerId.length > 0){
+				document.getElementById("error-message").style.display = "none"; 
+				xhttp.open("POST", "http://localhost:9090/demand/create", true);
+				xhttp.setRequestHeader("Content-type", "application/json");
+				xhttp.send(JSON.stringify(obj));
+			}else{
+				document.getElementById("error-message").style.display = "block"; 
+			}
+		}
+	</script>
   </footer>
 
   <!-- Main Scripts-->
