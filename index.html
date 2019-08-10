@@ -121,7 +121,7 @@
               <div class="collapse navbar-collapse navbar-ex2-collapse">
                 <ul class="nav navbar-nav">
                   <li class="active"><a href="index.html">Project Manager</a></li>
-                  <li><a href="requests.html">Bench Manager</a></li>
+                  <li><a href="requests.html">Available Resources</a></li>
                   <li>
                     <a href="mapping.html">Mappings</a>
                   </li>
@@ -204,6 +204,7 @@
 			if(skillselected.length > 0){
 				skillsArr.push(skillselected);
 				document.getElementById("selectedSkills").append(skillselected + ", ");
+				//document.getElementById("selectedSkills").append(skillselected);
 			}
 			//var removeSkill = document.createElement('<i class="fa fa-times fa-fw "></i>')
 			//console.log("skill name",skillselected);
@@ -226,7 +227,7 @@
 						document.getElementById("success-message").style.display = "block";
 						//sessionStorage.setItem("username", obj.userName);
 						//basepath += '/home';
-						//window.location.href = basepath;
+						window.location.href = requests.html;
 					}else{
 						console.log(false);
 						document.getElementById("warning-message").style.display = "block";
@@ -240,9 +241,11 @@
 			console.log(obj);
 			if(obj.projectManagerId.length > 0){
 				document.getElementById("error-message").style.display = "none"; 
-				xhttp.open("POST", "http://localhost:9090/demand/create", true);
+				xhttp.open("GET", "http://localhost:9090/demand/create/"+projectid+"/"+skillsArr[0] , true);
 				xhttp.setRequestHeader("Content-type", "application/json");
 				xhttp.send(JSON.stringify(obj));
+				document.getElementById("success-message").style.display = "block";
+				//xhttp.send();
 			}else{
 				document.getElementById("error-message").style.display = "block"; 
 			}

@@ -116,7 +116,7 @@
               <div class="collapse navbar-collapse navbar-ex2-collapse">
                 <ul class="nav navbar-nav">
                   <li><a href="index.html">Project Manager</a></li>
-                  <li class="active"><a href="requests.html">Bench Manager</a></li>
+                  <li class="active"><a href="requests.html">Available Resources</a></li>
                   <li>
                     <a href="mapping.html">Mappings</a>
                   </li>
@@ -137,7 +137,6 @@
         <h2>Demands</h2>
         <div class="row">
           
-            <p class="lead text-muted">Striped</p>
             <table class="table table-striped" data-effect="fade">
               <thead>
                 <tr>
@@ -151,7 +150,7 @@
               <tbody>
                 <tr>
                   <td>1</td>
-                  <td>Mark</td>
+                  <td>101</td>
                   <td>10114</td>
                   <td>HTML5, CSS3, JavaScript</td>
 				  <td><button type="button" class="btn btn-labeled btn-default">Search<span class="btn-label btn-label-right"><i class="fa fa-arrow-right"></i>
@@ -160,14 +159,14 @@
                 </tr>
                 <tr>
                   <td>2</td>
-                  <td>Jacob</td>
+                  <td>102</td>
                   <td>12753</td>
                   <td>Jenkins, Git</td>
 				  <td><button type="button" class="btn btn-labeled btn-default">Search<span class="btn-label btn-label-right"><i class="fa fa-arrow-right"></i>
                 </tr>
                 <tr>
                   <td>3</td>
-                  <td>Larry</td>
+                  <td>103</td>
                   <td>10114</td>
                   <td>Java, Spring Boot</td>
 				  <td><button type="button" class="btn btn-labeled btn-default">Search<span class="btn-label btn-label-right"><i class="fa fa-arrow-right"></i>
@@ -179,6 +178,9 @@
       </div>
     </div>
 
+	<div class="row">
+		<section id="demandsContainer"  class="results"></section>
+	</div>
   </div>
   <!-- /container -->
 
@@ -193,6 +195,64 @@
       -->
       
     </div>
+	<script>
+		function loadDemands(){
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					
+					var resText = JSON.parse(this.responseText);
+					console.log(resText);
+					
+					var table = document.createElement('table');
+					table.className = "table table-striped";
+					
+					resText.forEach(function(item, index){
+						console.log(item, index);
+						var demandsList = {};
+						/*if(item.status == "New"){
+							 demandsList[Object.keys(resText[index])[0]] = item.id,
+							 demandsList[Object.keys(resText[index])[5]] = item.createdBy	 
+						} */
+						var demandsListParsed = JSON.parse(JSON.stringify(demandsList));
+						console.log(demandsList);
+						var addBtn = '<button  class="btn btn-labeled btn-default" id="buy-'+ item.name +'" onclick="searchDemand('+ demandsListParsed +')" >Search<span class="btn-label btn-label-right"><i class="fa fa-arrow-right"></button>' : item.status ;
+						table.innerHTML += '<tr><td>' + item.id + '</td><td>' + item.demandId + '</td><td>' + item.projectId + '</td><td>' + item.skills + '</td><td>' + addBtn + '</td></tr>';
+						
+					});
+					var petListContainer = document.getElementById("demandsContainer");
+					petListContainer.innerHTML = "";
+					petListContainer.appendChild(table);
+					
+					function searchDemand(obj){
+			
+						console.log(obj);
+						var xhttp = new XMLHttpRequest();
+						xhttp.onreadystatechange = function() {
+							if (this.readyState == 4 && this.status == 200) {
+								/*document.getElementById("demo").innerHTML = this.responseText;*/
+								var resText = JSON.parse(this.responseText);
+								//
+								
+								alert(resText.message);
+							}
+						};
+						xhttp.open("POST", "http://10.117.215.79:3001/pets/rest/buyPet", true);
+						xhttp.setRequestHeader("Content-type", "application/json");
+						xhttp.send(JSON.stringify(obj));						
+					};
+						
+					
+				}
+			};
+			
+			xhttp.open("GET", "http://10.117.214.159:3001/pets/rest/allPets", true);
+			xhttp.send();
+		}
+		
+		
+		loadDemands();
+	</script>
   </footer>
 
   <!-- Main Scripts-->
